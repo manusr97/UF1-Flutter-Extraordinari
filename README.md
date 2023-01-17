@@ -1,5 +1,3 @@
-# dogs_db_pseb_bridge
-
 A new Flutter project.
 
 ## Getting Started
