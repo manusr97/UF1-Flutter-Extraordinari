@@ -1,46 +1,51 @@
-class Orden {
+class Gasto {
   int? id;
   late String fecha;
+  late String categoria;
   late String tipo;
-  late int bitcoin;
-  late int euro;
+  late String concepte;
+  late int quantitat;
 
-  static final Orden _modelo = Orden._internal();
-  factory Orden(){
+  static final Gasto _modelo = Gasto._internal();
+  factory Gasto(){
     return _modelo;
   }
-  Orden._internal();
+  Gasto._internal();
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'fecha': fecha,
+      'categoria': categoria,
       'tipo': tipo,
-      'bitcoin': bitcoin,
-      'euro': euro,
+      'concepte': concepte,
+      'quantitat': quantitat,
 
     };
   }
 
   // Convert a Map to a Dog Object
-  Orden.fromMap(Map<String, dynamic> map) {
+  Gasto.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     fecha = map['fecha'];
+    categoria = map['categoria'];
     tipo = map['tipo'];
-    bitcoin = map['bitcoin'];
-    euro = map['euro'];
+    concepte = map['concepte'];
+    quantitat = map['quantitat'];
   }
-  void updateOrden2(int _id,String _fecha,String _tipo,int _bitcoin,int _euro){
+  void updateGasto(int _id,String _fecha,String _categoria,String _tipo,String _concepte,int _quantitat){
     id = _id;
     fecha = _fecha;
+    categoria = _categoria;
     tipo = _tipo;
-    bitcoin = _bitcoin;
-    euro = _euro;
+    concepte = _concepte;
+    quantitat = _quantitat;
   }
-  void setOrden2(String _fecha,String _tipo,int _bitcoin,int _euro){
+  void setGasto2(String _fecha,String _categoria,String _tipo,String _concepte,int _quantitat){
     fecha = _fecha;
+    categoria = _categoria;
     tipo = _tipo;
-    bitcoin = _bitcoin;
-    euro = _euro;
+    concepte = _concepte;
+    quantitat = _quantitat;
   }
 }

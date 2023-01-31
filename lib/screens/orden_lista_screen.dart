@@ -4,23 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../models/modelo.dart';
 
-class ListaOrden extends StatefulWidget {
-  const ListaOrden({Key? key}) : super(key: key);
+class ListaGasto extends StatefulWidget {
+  const ListaGasto({Key? key}) : super(key: key);
 
   @override
-  State<ListaOrden> createState() => _ListaOrdenState();
+  State<ListaGasto> createState() => _ListaGastoState();
 }
 
-class _ListaOrdenState extends State<ListaOrden> {
+class _ListaGastoState extends State<ListaGasto> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Compras/Ventas'),
+        title: const Text('Lista de Gastos'),
       ),
-      body: FutureBuilder<List<Orden>>(
-        future: DatabaseHelper.instance.getAllOrden(),
-        builder: (BuildContext context, AsyncSnapshot<List<Orden>> snapshot) {
+      body: FutureBuilder<List<Gasto>>(
+        future: DatabaseHelper.instance.getAllGasto(),
+        builder: (BuildContext context, AsyncSnapshot<List<Gasto>> snapshot) {
           if (!snapshot.hasData) {
             return const Center(
               child: CircularProgressIndicator(),
@@ -29,13 +29,13 @@ class _ListaOrdenState extends State<ListaOrden> {
             if (snapshot.data!.isEmpty) {
               return const Center(child: Text('No Orden Found in Database'));
             } else {
-              List<Orden> ordenes = snapshot.data!;
+              List<Gasto> gastos = snapshot.data!;
               return Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: ListView.builder(
-                    itemCount: ordenes.length,
+                    itemCount: gastos.length,
                     itemBuilder: (context, index) {
-                      Orden orden = ordenes[index];
+                      Gasto gasto = gastos[index];
                       return Card(
                           margin: const EdgeInsets.only(bottom: 15),
                           child: Padding(
@@ -48,7 +48,7 @@ class _ListaOrdenState extends State<ListaOrden> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          orden.fecha,
+                                          gasto.fecha,
                                           style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
@@ -56,9 +56,10 @@ class _ListaOrdenState extends State<ListaOrden> {
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        Text('Tipo: ${orden.tipo}'),
-                                        Text('Bitcoin: ${orden.bitcoin}'),
-                                        Text('Euros: ${orden.euro}')
+                                        Text('Tipo: ${gasto.tipo}'),
+                                        Text('Categoria: ${gasto.categoria}'),
+                                        Text('Concepte: ${gasto.concepte}'),
+                                        Text('quantitat: ${gasto.quantitat}')
                                       ],
                                     ),
                                   ),
@@ -70,7 +71,7 @@ class _ListaOrdenState extends State<ListaOrden> {
                                                 await Navigator.of(context)
                                                     .push(MaterialPageRoute(
                                                         builder: (context) {
-                                              return Actualizar(orden: orden);
+                                              return Actualizar(gasto: gasto);
                                             }));
 
                                             if (result == 'done') {
@@ -104,19 +105,19 @@ class _ListaOrdenState extends State<ListaOrden> {
                                                                     context)
                                                                 .pop();
 
-                                                            // delete orden
+                                                            // delete gasto
 
                                                             int result =
                                                                 await DatabaseHelper
                                                                     .instance
-                                                                    .deleteOrden(
-                                                                        orden.id!);
+                                                                    .deleteGasto(
+                                                                        gasto.id!);
 
                                                             if (result > 0) {
                                                               Fluttertoast
                                                                   .showToast(
                                                                       msg:
-                                                                          'orden Deleted');
+                                                                          'gasto Deleted');
                                                               setState(() {});
                                                               // build function will be called
                                                             }

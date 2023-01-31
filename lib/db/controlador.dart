@@ -20,69 +20,71 @@ class DatabaseHelper {
   Future<Database> initializeDatabase() async {
 
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = '${directory.path}/orden.db';
+    String path = '${directory.path}/gasto.db';
 
-    var ordenDatabase = await openDatabase(
+    var gastoDatabase = await openDatabase(
       path,
       version: 1,
       onCreate: _createDb,
     );
 
-    return ordenDatabase;
+    return gastoDatabase;
   }
 
   void _createDb(Database db, int newVersion) async {
-    await db.execute('''Create TABLE orden (
+    await db.execute('''Create TABLE gasto (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
                   fecha TEXT,
+                  categoria TEXT,
                   tipo TEXT,
-                  bitcoin INTEGER,
-                  euro INTEGER )
+                  concepte TEXT,
+                  quantitat INTEGER )
     
     ''');
   }
-  void setOrden(fecha,tipo,bitcoin,euro){
-    Orden().setOrden2(fecha, tipo,bitcoin,euro);
-    insertOrden(Orden());
+  void setGasto(fecha,categoria,tipo,concepte,quantitat){
+    Gasto().setGasto2(fecha,categoria, tipo,concepte,quantitat);
+    insertGasto(Gasto());
   }
-  void actualizarOrden(id,fecha,tipo,bitcoin,euro){
-    Orden().updateOrden2(id, fecha,tipo,bitcoin,euro);
-    updateOrden(Orden());
+  void actualizarGasto(id,fecha,categoria,tipo,concepte,quantitat){
+    Gasto().updateGasto(id, fecha,categoria,tipo,concepte,quantitat);
+    updateGasto(Gasto());
   }
-  Future<int> insertOrden(Orden orden) async {
+  Future<int> insertGasto(Gasto gasto) async {
 
     Database db = await instance.database;
-    int result = await db.insert('orden', orden.toMap());
+    int result = await db.insert('gasto', gasto.toMap());
     return result;
   }
 
-  Future<List<Orden>> getAllOrden() async {
-    List<Orden> ordenes = [];
+  Future<List<Gasto>> getAllGasto() async {
+    List<Gasto> gastos = [];
 
     Database db = await instance.database;
 
-    List<Map<String, dynamic>> listMap = await db.query('orden');
+    List<Map<String, dynamic>> listMap = await db.query('gasto');
 
-    for (var ordenMap in listMap) {
-      Orden orden = Orden.fromMap(ordenMap);
-      ordenes.add(orden);
+    for (var gastoMap in listMap) {
+      Gasto gasto = Gasto.fromMap(gastoMap);
+      gastos.add(gasto);
+
     }
 
-    return ordenes;
+    return gastos;
   }
 
 
   // delete
-  Future<int> deleteOrden(int id) async {
+  Future<int> deleteGasto(int id) async {
     Database db = await instance.database;
-    int result = await db.delete('orden', where: 'id=?', whereArgs: [id]);
+    int result = await db.delete('gasto', where: 'id=?', whereArgs: [id]);
     return result;
   }
 
   // update
-  Future<int> updateOrden(Orden orden) async {
+  Future<int> updateGasto(Gasto gasto) async {
     Database db = await instance.database;
-    int result = await db.update('orden', orden.toMap(), where: 'id=?', whereArgs: [orden.id]);
+    int result = await db.update('gasto', gasto.toMap(), where: 'id=?', whereArgs: [gasto.id]);
     return result;
   }
 

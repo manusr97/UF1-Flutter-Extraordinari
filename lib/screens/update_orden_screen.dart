@@ -4,9 +4,9 @@ import '../db/controlador.dart';
 import '../models/modelo.dart';
 
 class Actualizar extends StatefulWidget {
-  final Orden orden;
+  final Gasto gasto;
 
-  const Actualizar({Key? key, required this.orden}) : super(key: key);
+  const Actualizar({Key? key, required this.gasto}) : super(key: key);
 
   @override
   State<Actualizar> createState() => _ActualizarState();
@@ -14,11 +14,17 @@ class Actualizar extends StatefulWidget {
 
 class _ActualizarState extends State<Actualizar> {
   late String fecha;
-  late List<String> items = ['Compra','Venta'];
-  late String? selectedItem = 'Compra';
-  late String tipo;
-  late int bitcoin;
-  late int euro;
+  // variables para dropdownlist
+  String? categoria;
+  late List<String> items2 = ['Festa','Viatge','Nòmina','Capritxo','Regal'];
+  late String? selectedItem2 = 'Nòmina';
+  // variables para dropdownlist
+  late List<String> items = ['Recurrent','Extraordinari'];
+  late String? selectedItem = 'Recurrent';
+  String? tipo;
+
+  late String concepte;
+  late int quantitat;
 
   var formKey = GlobalKey<FormState>();
 
@@ -26,7 +32,7 @@ class _ActualizarState extends State<Actualizar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update Orden'),
+        title: const Text('Update gasto'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -36,8 +42,8 @@ class _ActualizarState extends State<Actualizar> {
             child: Column(
               children: [
                 TextFormField(
-                  initialValue: widget.orden.fecha,
-                  decoration: const InputDecoration(hintText: 'Fecha de orden'),
+                  initialValue: widget.gasto.fecha,
+                  decoration: const InputDecoration(hintText: 'Fecha de gasto'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
                       return 'Porfavor introduce una fecha';
@@ -51,28 +57,27 @@ class _ActualizarState extends State<Actualizar> {
                   height: 10,
                 ),
                 TextFormField(
-                  initialValue: widget.orden.bitcoin.toString(),
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(hintText: 'Introduce los bitcoin'),
+                  initialValue: widget.gasto.concepte,
+                  decoration: const InputDecoration(hintText: 'Introduce el concepte'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return 'Introduce cantidad bitcoin';
+                      return 'Introduce concepte';
                     }
 
-                    bitcoin = int.parse(value);
+                    concepte = value;
                     return null;
                   },
                 ),
                 TextFormField(
-                  initialValue: widget.orden.euro.toString(),
+                  initialValue: widget.gasto.quantitat.toString(),
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(hintText: 'Introduce comision en  euros'),
+                  decoration: const InputDecoration(hintText: 'Introduce cantidad'),
                   validator: (String? value) {
                     if (value == null || value.isEmpty) {
-                      return 'Introduce cantidad euros';
+                      return 'Introduce cantidad';
                     }
 
-                    euro = int.parse(value);
+                    quantitat = int.parse(value);
                     return null;
                   },
                 ),
@@ -90,12 +95,26 @@ class _ActualizarState extends State<Actualizar> {
                   }),
 
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
+                DropdownButton<String>(
+                  value: selectedItem2,
+                  items: items2.map((item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item, style: TextStyle(fontSize:15)))).toList(),
+                  onChanged: (item) => setState((){
+                    selectedItem2 = item;
+                    categoria = item.toString();
+                  }),
+
+                ),
                 ElevatedButton(
                     onPressed: () async {
                       if (formKey.currentState!.validate()) {
-                        var id = widget.orden.id;
+                        var id = widget.gasto.id;
                         var dbHelper = DatabaseHelper.instance;
-                        dbHelper.actualizarOrden(id,fecha,tipo,bitcoin,euro);
+                        dbHelper.actualizarGasto(id,fecha,categoria,tipo,concepte,quantitat);
 
                         Navigator.pop(context, 'done');
                         //
