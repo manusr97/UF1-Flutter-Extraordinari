@@ -20,7 +20,7 @@ class DatabaseHelper {
   Future<Database> initializeDatabase() async {
 
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = '${directory.path}/gasto.db';
+    String path = '${directory.path}/coche.db';
 
     var gastoDatabase = await openDatabase(
       path,
@@ -32,28 +32,28 @@ class DatabaseHelper {
   }
 
   void _createDb(Database db, int newVersion) async {
-    await db.execute('''Create TABLE gasto (
+    await db.execute('''Create TABLE coche (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  fecha TEXT,
-                  categoria TEXT,
+                  fecha INTEGER,
+                  km INTEGER,
                   tipo TEXT,
                   concepte TEXT,
                   quantitat INTEGER )
     
     ''');
   }
-  void setGasto(fecha,categoria,tipo,concepte,quantitat){
-    Gasto().setGasto2(fecha,categoria, tipo,concepte,quantitat);
+  void setGasto(fecha,km,tipo,concepte,quantitat){
+    Gasto().setGasto2(fecha,km, tipo,concepte,quantitat);
     insertGasto(Gasto());
   }
-  void actualizarGasto(id,fecha,categoria,tipo,concepte,quantitat){
-    Gasto().updateGasto(id, fecha,categoria,tipo,concepte,quantitat);
+  void actualizarGasto(id,fecha,km,tipo,concepte,quantitat){
+    Gasto().updateGasto(id,fecha,km,tipo,concepte,quantitat);
     updateGasto(Gasto());
   }
   Future<int> insertGasto(Gasto gasto) async {
 
     Database db = await instance.database;
-    int result = await db.insert('gasto', gasto.toMap());
+    int result = await db.insert('coche', gasto.toMap());
     return result;
   }
 
@@ -62,7 +62,7 @@ class DatabaseHelper {
 
     Database db = await instance.database;
 
-    List<Map<String, dynamic>> listMap = await db.query('gasto');
+    List<Map<String, dynamic>> listMap = await db.query('coche');
 
     for (var gastoMap in listMap) {
       Gasto gasto = Gasto.fromMap(gastoMap);
@@ -77,14 +77,14 @@ class DatabaseHelper {
   // delete
   Future<int> deleteGasto(int id) async {
     Database db = await instance.database;
-    int result = await db.delete('gasto', where: 'id=?', whereArgs: [id]);
+    int result = await db.delete('coche', where: 'id=?', whereArgs: [id]);
     return result;
   }
 
   // update
   Future<int> updateGasto(Gasto gasto) async {
     Database db = await instance.database;
-    int result = await db.update('gasto', gasto.toMap(), where: 'id=?', whereArgs: [gasto.id]);
+    int result = await db.update('coche', gasto.toMap(), where: 'id=?', whereArgs: [gasto.id]);
     return result;
   }
 

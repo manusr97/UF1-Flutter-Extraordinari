@@ -1,4 +1,5 @@
 import 'package:dogs_db_pseb_bridge/screens/afegir_screen.dart';
+import 'package:dogs_db_pseb_bridge/screens/orden_lista_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
 
         primarySwatch: Colors.blue,
       ),
-      home: const AfegirGasto(),
+      home: const ListaGasto(),
     );
   }
 }

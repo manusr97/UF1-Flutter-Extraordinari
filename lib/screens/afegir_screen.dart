@@ -3,6 +3,7 @@ import 'package:dogs_db_pseb_bridge/models/modelo.dart';
 import 'package:dogs_db_pseb_bridge/screens/orden_lista_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter/services.dart';
 
 class AfegirGasto extends StatefulWidget {
   const AfegirGasto({Key? key}) : super(key: key);
@@ -14,15 +15,16 @@ class AfegirGasto extends StatefulWidget {
 class _AfegirGastoState extends State<AfegirGasto> {
 
   late int id;
-  late String fecha;
+  late DateTime selectedDate = DateTime.now();
+
   // variables para dropdownlist
-  late String categoria;
-  late List<String> items2 = ['Festa','Viatge','Nòmina','Capritxo','Regal'];
-  late String? selectedItem2 = 'Nòmina';
+  late int km;
+  late List<String> items2 = ['Combustible','Avaria','Assegurança','Equipament','Altres'];
+  late String? selectedItem2 = 'Combustible';
   // variables para dropdownlist
-  late List<String> items = ['Recurrent','Extraordinari'];
-  late String? selectedItem = 'Recurrent';
-  late String tipo;
+  //late List<String> items = ['Recurrent','Extraordinari'];
+  //late String? selectedItem = 'Recurrent';
+  late String tipo = 'Combustible';
 
   late String concepte;
   late int quantitat;
@@ -34,7 +36,7 @@ class _AfegirGastoState extends State<AfegirGasto> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Añade gasto'),
+        title: const Text('Añade coche'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -43,18 +45,27 @@ class _AfegirGastoState extends State<AfegirGasto> {
             key: formKey,
             child: Column(
               children: [
-                TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: 'Fecha del gasto'
-                  ),
-                  validator: (String? value){
-                    if( value == null || value.isEmpty){
-                      return 'Porfavor introduce una fecha de gasto';
-                    }
+                GestureDetector( // Utilizamos GestureDetector para detectar el evento de toque
+                  onTap: () => _selectDate(context), // Llamamos a la función _selectDate cuando se toca el campo
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                          hintText: 'Fecha'
+                      ),
+                      controller: TextEditingController(
+                        text: selectedDate != null
+                            ? '${selectedDate.day}-${selectedDate.month}-${selectedDate.year}'
+                            : '',
+                      ),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor introduce una fecha';
+                        }
 
-                    fecha = value;
-                    return null;
-                  },
+                        return null;
+                      },
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 10,),
                 DropdownButton<String>(
@@ -64,7 +75,7 @@ class _AfegirGastoState extends State<AfegirGasto> {
                       child: Text(item, style: TextStyle(fontSize:15)))).toList(),
                   onChanged: (item) => setState((){
                     selectedItem2 = item;
-                    categoria = item.toString();
+                    tipo = item.toString();
                   }),
 
                 ),
@@ -85,28 +96,51 @@ class _AfegirGastoState extends State<AfegirGasto> {
                 TextFormField(
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                      hintText: 'Cantidad dinero'
+                      hintText: 'Cantidad'
                   ),
-                  validator: (String? value){
-                    if( value == null || value.isEmpty){
-                      return 'Porfavor introduce una cantidad de dinero';
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly // Solo permite ingresar dígitos
+                  ],
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor introduce una cantidad';
                     }
 
                     quantitat = int.parse(value);
                     return null;
                   },
                 ),
-                DropdownButton<String>(
-                    value: selectedItem,
-                    items: items.map((item) => DropdownMenuItem<String>(
-                        value: item,
-                    child: Text(item, style: TextStyle(fontSize:15)))).toList(),
-                  onChanged: (item) => setState((){
-                    selectedItem = item;
-                    tipo = item.toString();
-                  }),
 
+                const SizedBox(height: 10,),
+
+                TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                      hintText: 'Cantidad Kilometros'
+                  ),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly // Solo permite ingresar dígitos
+                  ],
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor introduce Kilometros';
+                    }
+
+                    km = int.parse(value);
+                    return null;
+                  },
                 ),
+                // DropdownButton<String>(
+                //     value: selectedItem,
+                //     items: items.map((item) => DropdownMenuItem<String>(
+                //         value: item,
+                //     child: Text(item, style: TextStyle(fontSize:15)))).toList(),
+                //   onChanged: (item) => setState((){
+                //     selectedItem = item;
+                //     tipo = item.toString();
+                //   }),
+                //
+                // ),
 
                 const SizedBox(height: 10,),
 
@@ -114,17 +148,14 @@ class _AfegirGastoState extends State<AfegirGasto> {
 
                   if( formKey.currentState!.validate()){
                     var dbHelper =  DatabaseHelper.instance;
-                    dbHelper.setGasto(fecha,categoria,tipo, concepte,quantitat);
+                    int unixTimestamp = selectedDate.millisecondsSinceEpoch;
+                    dbHelper.setGasto(unixTimestamp,km,tipo, concepte,quantitat);
+
                   }
 
-
+                  Navigator.pop(context, 'done');
                 }, child: const Text('Save')),
-                ElevatedButton(onPressed: () async{
-                  await Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                    return const ListaGasto();
-                  }));
-                  Gasto().id = null;
-                }, child: const Text('View All')),
+
                 /*ElevatedButton(onPressed: (){
                   Navigator.of(context).push(MaterialPageRoute(builder: (context){
                     return Graph();
@@ -137,5 +168,19 @@ class _AfegirGastoState extends State<AfegirGasto> {
         ),
       ),
     );
+  }
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
   }
 }

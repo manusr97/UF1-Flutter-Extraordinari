@@ -1,7 +1,7 @@
 class Gasto {
   int? id;
-  late String fecha;
-  late String categoria;
+  late int fecha;
+  late int? km;
   late String tipo;
   late String concepte;
   late int quantitat;
@@ -16,7 +16,7 @@ class Gasto {
     return {
       'id': id,
       'fecha': fecha,
-      'categoria': categoria,
+      'km': km,
       'tipo': tipo,
       'concepte': concepte,
       'quantitat': quantitat,
@@ -28,22 +28,22 @@ class Gasto {
   Gasto.fromMap(Map<String, dynamic> map) {
     id = map['id'];
     fecha = map['fecha'];
-    categoria = map['categoria'];
+    km = map['km'];
     tipo = map['tipo'];
     concepte = map['concepte'];
     quantitat = map['quantitat'];
   }
-  void updateGasto(int _id,String _fecha,String _categoria,String _tipo,String _concepte,int _quantitat){
+  void updateGasto(int _id,int _fecha,int _km,String _tipo,String _concepte,int _quantitat){
     id = _id;
     fecha = _fecha;
-    categoria = _categoria;
+    km = _km;
     tipo = _tipo;
     concepte = _concepte;
     quantitat = _quantitat;
   }
-  void setGasto2(String _fecha,String _categoria,String _tipo,String _concepte,int _quantitat){
+  void setGasto2(int _fecha,int _km,String _tipo,String _concepte,int _quantitat){
     fecha = _fecha;
-    categoria = _categoria;
+    km = _km;
     tipo = _tipo;
     concepte = _concepte;
     quantitat = _quantitat;
